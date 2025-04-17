@@ -15,6 +15,7 @@ import { topicModel } from "./models/TopicModel.js";
 import { regionModel } from "./models/RegionModel.js";
 import questionsRouter from './route/questions.js';
 // import {} from "../frontend/frontendui/build"
+import helmet from "helmet";
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -52,6 +53,32 @@ app.use(session({
     saveUninitialized: true,     // Save uninitialized sessions
     cookie: { maxAge: 60000 }    // Session cookie will expire in 1 minute for demonstration purposes
 }));
+
+app.use(helmet());
+app.use(
+    helmet.contentSecurityPolicy({
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:"],
+        connectSrc: ["'self'"],
+      },
+    })
+  );
+app.use(helmet.frameguard({ action: 'sameorigin' }));
+app.use(helmet.referrerPolicy({ policy: 'strict-origin-when-cross-origin' }));
+app.use(helmet.noSniff());
+// Permissions-Policy (not covered by Helmet by default)
+app.use((req, res, next) => {
+    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+    res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+    // use below 3 lines if not using helmet for these 3 options below 
+    // res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    // res.setHeader('X-Content-Type-Options', 'nosniff');
+    // res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    next();
+});
 
 var skip = 0;
 const limit = 20;
