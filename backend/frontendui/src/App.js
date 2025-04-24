@@ -13,6 +13,7 @@ import PlayNow from './js/PlayNow';
 // import MyScores from './js/MyScores';
 import Profile from './js/Profile';
 import Logout from './js/Logout';
+import { Helmet } from 'react-helmet';
 
 
 // var apiUrl = ""
@@ -61,6 +62,10 @@ function App() {
 
   return (
     <div className="App">
+      <Helmet>
+        <title>myquizap</title>
+        <meta name="description" content="myquizap"/>
+      </Helmet>
       <Router>
         {loading ? (
                   <p>Loading...</p>
